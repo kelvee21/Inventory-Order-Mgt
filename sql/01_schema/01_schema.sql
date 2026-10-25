@@ -1,5 +1,5 @@
 -- ============================================================
--- 01_schema.sql
+-- sql/01_schema/01_schema.sql
 -- Core tables, keys, checks and relationships.
 --
 -- MySQL 8.0.16+ is required because CHECK constraints are

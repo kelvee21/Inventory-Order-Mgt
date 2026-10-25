@@ -1,5 +1,5 @@
 -- ============================================================
--- 09_data_quality_checks.sql
+-- sql/09_quality/09_data_quality_checks.sql
 -- Read-only integrity checks. Every row should say PASS.
 --
 -- These are deliberately set-based: they can be rerun after a

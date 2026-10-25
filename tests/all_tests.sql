@@ -4,9 +4,9 @@
 -- Edit the test files, then keep this file in sync.
 -- ============================================================
 
--- >>> 00_test_helpers.sql >>>
+-- >>> tests/sql/00_test_helpers.sql >>>
 -- ============================================================
--- tests/00_test_helpers.sql
+-- tests/sql/00_test_helpers.sql
 -- Assertion helpers for the MySQL test suite.
 --
 -- These are created once. Test files only run DML and CALLs,
@@ -69,9 +69,9 @@ DELIMITER ;
 
 SELECT 'Test helpers created.' AS message;
 
--- >>> 01_constraints_test.sql >>>
+-- >>> tests/sql/01_constraints_test.sql >>>
 -- ============================================================
--- tests/01_constraints_test.sql
+-- tests/sql/01_constraints_test.sql
 -- Constraint and trigger rejection tests.
 -- ============================================================
 
@@ -185,9 +185,9 @@ SELECT '01_constraints_test passed' AS result;
 
 ROLLBACK;
 
--- >>> 02_functions_test.sql >>>
+-- >>> tests/sql/02_functions_test.sql >>>
 -- ============================================================
--- tests/02_functions_test.sql
+-- tests/sql/02_functions_test.sql
 -- Boundary tests for tier and bulk-discount functions.
 -- ============================================================
 
@@ -213,9 +213,9 @@ SELECT '02_functions_test passed' AS result;
 
 ROLLBACK;
 
--- >>> 03_order_tests.sql >>>
+-- >>> tests/sql/03_order_tests.sql >>>
 -- ============================================================
--- tests/03_order_tests.sql
+-- tests/sql/03_order_tests.sql
 -- Order placement, trigger automation and failure handling.
 -- ============================================================
 
@@ -373,9 +373,9 @@ SELECT '03_order_tests passed' AS result;
 
 ROLLBACK;
 
--- >>> 04_inventory_tests.sql >>>
+-- >>> tests/sql/04_inventory_tests.sql >>>
 -- ============================================================
--- tests/04_inventory_tests.sql
+-- tests/sql/04_inventory_tests.sql
 -- Restock, idempotence and reconciliation tests.
 -- ============================================================
 
@@ -462,9 +462,9 @@ SELECT '04_inventory_tests passed' AS result;
 
 ROLLBACK;
 
--- >>> 05_views_test.sql >>>
+-- >>> tests/sql/05_views_test.sql >>>
 -- ============================================================
--- tests/05_views_test.sql
+-- tests/sql/05_views_test.sql
 -- Expected rows and values for the reporting views.
 -- ============================================================
 

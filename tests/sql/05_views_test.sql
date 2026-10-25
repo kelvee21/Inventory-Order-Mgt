@@ -1,5 +1,5 @@
 -- ============================================================
--- tests/05_views_test.sql
+-- tests/sql/05_views_test.sql
 -- Expected rows and values for the reporting views.
 -- ============================================================
 

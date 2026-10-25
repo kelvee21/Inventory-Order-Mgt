@@ -1,5 +1,5 @@
 -- ============================================================
--- 07_seed_data.sql
+-- sql/07_seed/07_seed_data.sql
 -- Deterministic sample data for demos, reports and tests.
 --
 -- Orders are loaded through place_order, not inserted directly,

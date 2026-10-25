@@ -1,5 +1,5 @@
 -- ============================================================
--- 05_triggers.sql
+-- sql/05_triggers/05_triggers.sql
 -- Order-line automation:
 --   * snapshot the catalogue price
 --   * apply the quantity discount

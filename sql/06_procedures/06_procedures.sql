@@ -1,5 +1,5 @@
 -- ============================================================
--- 06_procedures.sql
+-- sql/06_procedures/06_procedures.sql
 -- place_order           - create an order with one or more JSON items
 -- restock_low_products  - top up every product below its reorder level
 --

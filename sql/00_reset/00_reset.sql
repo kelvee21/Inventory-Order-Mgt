@@ -1,5 +1,5 @@
 -- ============================================================
--- 00_reset.sql
+-- sql/00_reset/00_reset.sql
 -- Rebuild the inventory_order_mgt database from a clean state.
 --
 -- Safe for a local lab database: it drops the lab's views,

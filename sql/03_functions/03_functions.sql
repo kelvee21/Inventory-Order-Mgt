@@ -1,5 +1,5 @@
 -- ============================================================
--- 03_functions.sql
+-- sql/03_functions/03_functions.sql
 -- Deterministic business rules kept in one place.
 -- ============================================================
 

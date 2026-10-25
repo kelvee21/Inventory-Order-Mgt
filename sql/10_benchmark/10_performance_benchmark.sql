@@ -1,5 +1,5 @@
 -- ============================================================
--- 10_performance_benchmark.sql
+-- sql/10_benchmark/10_performance_benchmark.sql
 -- Compare the customer-order query before and after adding a
 -- composite index on a 200,000-row synthetic table.
 --

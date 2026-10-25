@@ -1,5 +1,5 @@
 -- ============================================================
--- tests/02_functions_test.sql
+-- tests/sql/02_functions_test.sql
 -- Boundary tests for tier and bulk-discount functions.
 -- ============================================================
 

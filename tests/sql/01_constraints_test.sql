@@ -1,5 +1,5 @@
 -- ============================================================
--- tests/01_constraints_test.sql
+-- tests/sql/01_constraints_test.sql
 -- Constraint and trigger rejection tests.
 -- ============================================================
 

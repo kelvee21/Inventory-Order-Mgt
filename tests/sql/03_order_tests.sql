@@ -1,5 +1,5 @@
 -- ============================================================
--- tests/03_order_tests.sql
+-- tests/sql/03_order_tests.sql
 -- Order placement, trigger automation and failure handling.
 -- ============================================================
 

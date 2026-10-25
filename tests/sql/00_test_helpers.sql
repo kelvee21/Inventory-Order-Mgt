@@ -1,5 +1,5 @@
 -- ============================================================
--- tests/00_test_helpers.sql
+-- tests/sql/00_test_helpers.sql
 -- Assertion helpers for the MySQL test suite.
 --
 -- These are created once. Test files only run DML and CALLs,

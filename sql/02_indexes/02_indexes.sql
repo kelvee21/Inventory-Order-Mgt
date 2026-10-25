@@ -1,5 +1,5 @@
 -- ============================================================
--- 02_indexes.sql
+-- sql/02_indexes/02_indexes.sql
 -- Additional indexes that are not needed by foreign keys.
 --
 -- MySQL creates an index automatically for an unindexed FK

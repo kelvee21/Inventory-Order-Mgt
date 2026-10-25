@@ -1,5 +1,5 @@
 -- ============================================================
--- 08_reports.sql
+-- sql/08_reports/08_reports.sql
 -- Business reports for the lab deliverables.
 --
 -- Run after sql/build.sql. The seed data produces five orders

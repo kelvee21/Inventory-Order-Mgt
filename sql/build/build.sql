@@ -4,9 +4,9 @@
 -- Edit the stage files, then keep this file in sync.
 -- ============================================================
 
--- >>> 00_reset.sql >>>
+-- >>> sql/00_reset/00_reset.sql >>>
 -- ============================================================
--- 00_reset.sql
+-- sql/00_reset/00_reset.sql
 -- Rebuild the inventory_order_mgt database from a clean state.
 --
 -- Safe for a local lab database: it drops the lab's views,
@@ -42,9 +42,9 @@ DROP FUNCTION IF EXISTS bulk_discount_rate;
 
 SELECT 'Database reset complete.' AS message;
 
--- >>> 01_schema.sql >>>
+-- >>> sql/01_schema/01_schema.sql >>>
 -- ============================================================
--- 01_schema.sql
+-- sql/01_schema/01_schema.sql
 -- Core tables, keys, checks and relationships.
 --
 -- MySQL 8.0.16+ is required because CHECK constraints are
@@ -197,9 +197,9 @@ CREATE TABLE inventory_logs (
 
 SELECT 'Schema created.' AS message;
 
--- >>> 02_indexes.sql >>>
+-- >>> sql/02_indexes/02_indexes.sql >>>
 -- ============================================================
--- 02_indexes.sql
+-- sql/02_indexes/02_indexes.sql
 -- Additional indexes that are not needed by foreign keys.
 --
 -- MySQL creates an index automatically for an unindexed FK
@@ -215,9 +215,9 @@ CREATE INDEX idx_orders_order_date
 
 SELECT 'Additional indexes created.' AS message;
 
--- >>> 03_functions.sql >>>
+-- >>> sql/03_functions/03_functions.sql >>>
 -- ============================================================
--- 03_functions.sql
+-- sql/03_functions/03_functions.sql
 -- Deterministic business rules kept in one place.
 -- ============================================================
 
@@ -257,9 +257,9 @@ DELIMITER ;
 
 SELECT 'Functions created.' AS message;
 
--- >>> 04_views.sql >>>
+-- >>> sql/04_views/04_views.sql >>>
 -- ============================================================
--- 04_views.sql
+-- sql/04_views/04_views.sql
 -- Stable read interfaces for reports and analysts.
 -- ============================================================
 
@@ -316,9 +316,9 @@ GROUP BY
 
 SELECT 'Views created.' AS message;
 
--- >>> 05_triggers.sql >>>
+-- >>> sql/05_triggers/05_triggers.sql >>>
 -- ============================================================
--- 05_triggers.sql
+-- sql/05_triggers/05_triggers.sql
 -- Order-line automation:
 --   * snapshot the catalogue price
 --   * apply the quantity discount
@@ -416,9 +416,9 @@ DELIMITER ;
 
 SELECT 'Triggers created.' AS message;
 
--- >>> 06_procedures.sql >>>
+-- >>> sql/06_procedures/06_procedures.sql >>>
 -- ============================================================
--- 06_procedures.sql
+-- sql/06_procedures/06_procedures.sql
 -- place_order           - create an order with one or more JSON items
 -- restock_low_products  - top up every product below its reorder level
 --
@@ -617,9 +617,9 @@ DELIMITER ;
 
 SELECT 'Procedures created.' AS message;
 
--- >>> 07_seed_data.sql >>>
+-- >>> sql/07_seed/07_seed_data.sql >>>
 -- ============================================================
--- 07_seed_data.sql
+-- sql/07_seed/07_seed_data.sql
 -- Deterministic sample data for demos, reports and tests.
 --
 -- Orders are loaded through place_order, not inserted directly,

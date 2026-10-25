@@ -1,5 +1,5 @@
 -- ============================================================
--- tests/04_inventory_tests.sql
+-- tests/sql/04_inventory_tests.sql
 -- Restock, idempotence and reconciliation tests.
 -- ============================================================
 

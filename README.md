@@ -2,7 +2,7 @@
 
 A MySQL 8 project for the AmaliTech DEM03 lab. It models customers, products, orders, order lines and inventory history, then automates order placement, stock deduction, totals, discounts, customer tiers and replenishment.
 
-The project is deliberately small and auditable: five core tables, two functions, three views, two triggers, two stored procedures, ten reports and a transaction-safe test suite.
+The project is deliberately small and auditable: five core tables, two functions, three views, two triggers, two stored procedures, ten reports, sixteen data-quality checks and a transaction-safe test suite.
 
 ## What it demonstrates
 
@@ -26,20 +26,20 @@ The local MySQL service used during development was `MySQL80` on port `3306`.
 ## Quick start in MySQL Workbench
 
 1. Open a connection to your local MySQL 8 server as a user with `CREATE` and `CREATE ROUTINE` privileges.
-2. Open `sql/build.sql`.
+2. Open `sql/build/build.sql`.
 3. Execute the whole script. It creates the `inventory_order_mgt` database, tables, indexes, functions, views, triggers, procedures and seed data.
-4. Open `sql/08_reports.sql` and execute the queries one section at a time.
-5. Open `sql/09_data_quality_checks.sql` and execute it. Every check should report `PASS`.
+4. Open `sql/08_reports/08_reports.sql` and execute the queries one section at a time.
+5. Open `sql/09_quality/09_data_quality_checks.sql` and execute it. Every check should report `PASS`.
 
-To rebuild from scratch, run `sql/build.sql` again. `sql/00_reset.sql` drops only the lab objects in `inventory_order_mgt`; it does not drop the database.
+To rebuild from scratch, run `sql/build/build.sql` again. `sql/00_reset/00_reset.sql` drops only the lab objects in `inventory_order_mgt`; it does not drop the database.
 
 ### CLI alternative
 
 ```powershell
 $env:MYSQL_PWD = "<your local MySQL password>"
-mysql -u root -e "source sql/build.sql"
-mysql -u root --table -e "source sql/08_reports.sql"
-mysql -u root --table -e "source sql/09_data_quality_checks.sql"
+mysql -u root -e "source sql/build/build.sql"
+mysql -u root --table -e "source sql/08_reports/08_reports.sql"
+mysql -u root --table -e "source sql/09_quality/09_data_quality_checks.sql"
 Remove-Item Env:MYSQL_PWD
 ```
 
@@ -52,30 +52,33 @@ Do not commit the real password. Keep it in your Workbench profile, a local `.en
 ├── .env.example
 ├── README.md
 ├── sql/
-│   ├── 00_reset.sql
-│   ├── 01_schema.sql
-│   ├── 02_indexes.sql
-│   ├── 03_functions.sql
-│   ├── 04_views.sql
-│   ├── 05_triggers.sql
-│   ├── 06_procedures.sql
-│   ├── 07_seed_data.sql
-│   ├── 08_reports.sql
-│   ├── 09_data_quality_checks.sql
-│   ├── 10_performance_benchmark.sql
-│   └── build.sql              # assembled from 00-07
+│   ├── 00_reset/00_reset.sql
+│   ├── 01_schema/01_schema.sql
+│   ├── 02_indexes/02_indexes.sql
+│   ├── 03_functions/03_functions.sql
+│   ├── 04_views/04_views.sql
+│   ├── 05_triggers/05_triggers.sql
+│   ├── 06_procedures/06_procedures.sql
+│   ├── 07_seed/07_seed_data.sql
+│   ├── 08_reports/08_reports.sql
+│   ├── 09_quality/09_data_quality_checks.sql
+│   ├── 10_benchmark/10_performance_benchmark.sql
+│   ├── build/build.sql        # assembled from stages 00-07
+│   └── README.md              # stage map and run order
 └── tests/
-    ├── 00_test_helpers.sql
-    ├── 01_constraints_test.sql
-    ├── 02_functions_test.sql
-    ├── 03_order_tests.sql
-    ├── 04_inventory_tests.sql
-    ├── 05_views_test.sql
+    ├── sql/                   # test sources, run in numeric order
+    │   ├── 00_test_helpers.sql
+    │   ├── 01_constraints_test.sql
+    │   ├── 02_functions_test.sql
+    │   ├── 03_order_tests.sql
+    │   ├── 04_inventory_tests.sql
+    │   └── 05_views_test.sql
     ├── all_tests.sql          # assembled, Workbench-friendly
-    └── run_all.sql            # CLI SOURCE runner
+    ├── run_all.sql            # CLI SOURCE runner
+    └── README.md
 ```
 
-The numbered SQL files are the source of truth. `sql/build.sql` is the assembled build of stages 00–07 and is committed so the project can be built in one step. `tests/all_tests.sql` is the assembled test suite; `tests/run_all.sql` runs the modular test files.
+The numbered SQL stage directories are the source of truth. Each directory maps to one step in the execution order, so the folder name explains both *what* the script does and *when* it runs. `sql/build/build.sql` is the assembled build of stages 00–07 and is committed so the project can be built in one step. `tests/all_tests.sql` is the assembled test suite; `tests/run_all.sql` runs the modular test files from the repository root.
 
 ## Database design
 
@@ -160,7 +163,7 @@ Remove-Item Env:MYSQL_PWD
 
 In MySQL Workbench, open `tests/all_tests.sql` and execute the whole script.
 
-`tests/all_tests.sql` contains the helpers and all five test files. `tests/run_all.sql` is the CLI-only alternative that uses `SOURCE`; run it from the repository root so its `tests/...` paths resolve.
+`tests/all_tests.sql` contains the helpers and all five test files. `tests/run_all.sql` is the CLI-only alternative that uses `SOURCE`; run it from the repository root so its `tests/sql/...` paths resolve.
 
 Each test file wraps its changes in `START TRANSACTION` / `ROLLBACK`. A failed assertion raises `SQLSTATE 45000` and stops the script.
 
@@ -174,24 +177,24 @@ Measured result on MySQL 8.0.46:
 05_views_test passed
 ```
 
-The suite covers constraint violations, tier and discount boundaries, multi-product orders, caller-price rejection, historical price snapshots, oversell rejection, JSON validation, restock idempotence and the reporting views.
+The suite covers constraint violations, tier and discount boundaries, multi-product orders, caller-price rejection, historical price snapshots, oversell rejection, JSON validation, restock idempotence and the reporting views. Both the assembled suite and the modular CLI runner completed with all five suites passing.
 
 ## Data-quality checks
 
-`sql/09_data_quality_checks.sql` runs 16 read-only integrity checks:
+`sql/09_quality/09_data_quality_checks.sql` runs 16 read-only integrity checks:
 
 ```powershell
-mysql -u root --table -e "source sql/09_data_quality_checks.sql"
+mysql -u root --table -e "source sql/09_quality/09_data_quality_checks.sql"
 ```
 
 Expected result: every row reports `PASS`, including stock-to-log reconciliation, order-total reconciliation, sale-log matching, discount rules, tier rules and low-stock view consistency.
 
 ## Performance benchmark
 
-`sql/10_performance_benchmark.sql` creates a 200,000-row temporary table and compares the customer-order query before and after adding `(customer_id, order_date)`.
+`sql/10_benchmark/10_performance_benchmark.sql` creates a 200,000-row temporary table and compares the customer-order query before and after adding `(customer_id, order_date)`.
 
 ```powershell
-mysql -u root --table -e "source sql/10_performance_benchmark.sql"
+mysql -u root --table -e "source sql/10_benchmark/10_performance_benchmark.sql"
 ```
 
 Measured on MySQL 8.0.46:
@@ -206,17 +209,17 @@ The exact numbers depend on the machine and buffer state; the plan shape is the 
 ## Verification snapshot
 
 - **MySQL:** 8.0.46, local `MySQL80`, port 3306.
-- **Clean build:** `sql/build.sql` completed through seed data.
-- **Tests:** all five files passed.
+- **Clean build:** `sql/build/build.sql` completed through seed data.
+- **Tests:** all five files passed through both runners.
 - **Data quality:** all 16 checks returned `PASS`.
 - **Benchmark:** full scan 31.4 ms (31–42 ms observed); covering index 0.065 ms (0.065–0.077 ms observed).
 - **Seed state:** five orders totalling 1030.99; stock 105 / 12 / 39 / 2 / 0; three low-stock products.
-- **Last verified:** 23 October 2026, after the full test pass.
+- **Last verified:** 25 October 2026, after the SQL stage and test reorganisation.
 
 ## Troubleshooting
 
 - **`CHECK` constraints seem ignored:** confirm `SELECT VERSION();` is 8.0.16 or newer.
 - **Error 1418 when creating functions/triggers:** run as a privileged local user, or ask an administrator to enable `log_bin_trust_function_creators`.
-- **`DELIMITER` errors in Workbench:** run the whole `sql/build.sql` script rather than individual statements inside a routine.
+- **`DELIMITER` errors in Workbench:** run the whole `sql/build/build.sql` script rather than individual statements inside a routine.
 - **`Can't connect`:** confirm the MySQL80 service is running and Workbench is using port 3306.
-- **Reset a failed run:** run `sql/00_reset.sql`, then `sql/build.sql`.
+- **Reset a failed run:** run `sql/00_reset/00_reset.sql`, then `sql/build/build.sql`.
