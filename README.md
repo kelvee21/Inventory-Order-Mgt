@@ -4,6 +4,8 @@ A MySQL 8 project for the AmaliTech DEM03 lab. It models customers, products, or
 
 The project is deliberately small and auditable: five core tables, two functions, three views, two triggers, two stored procedures, ten reports, sixteen data-quality checks and a transaction-safe test suite.
 
+The full write-up is in **[`docs/LAB_REPORT.md`](docs/LAB_REPORT.md)**. It covers the schema, order workflow, reporting, replenishment, performance work, testing and reflection.
+
 ## What it demonstrates
 
 - Relational schema design with primary, unique, foreign-key and `CHECK` constraints
@@ -51,6 +53,8 @@ Do not commit the real password. Keep it in your Workbench profile, a local `.en
 .
 ├── .env.example
 ├── README.md
+├── docs/
+│   └── LAB_REPORT.md          # full lab report
 ├── sql/
 │   ├── 00_reset/00_reset.sql
 │   ├── 01_schema/01_schema.sql
