@@ -4,9 +4,9 @@ I wrote five transaction-wrapped test files and two assertion helpers. `tests/al
 
 There are **72 assertions**. A successful run leaves the seed state unchanged because every file ends with `ROLLBACK`. A failed assertion raises `SQLSTATE 45000` and stops the script.
 
-## What the suite covers
+## What I cover
 
-| File | Assertions | Focus | Report |
+| File | Assertions | Focus | Where I explain it |
 |---|---:|---|---|
 | `tests/sql/00_test_helpers.sql` | 0 | `assert_true` and `assert_raises` | [7.2 Assertion helpers](../docs/LAB_REPORT.md#72-assertion-helpers) |
 | `tests/sql/01_constraints_test.sql` | 17 | Duplicate and case-only duplicate email, invalid email, blank name, negative price/stock/reorder, duplicate product name, unknown customer/order/product, duplicate line, zero quantity, invalid discount, negative stock update, zero inventory change, invalid reason | [7.3 Test files](../docs/LAB_REPORT.md#73-test-files) |
@@ -17,7 +17,7 @@ There are **72 assertions**. A successful run leaves the seed state unchanged be
 
 The test files, assertion helpers and coverage gaps are summarised in [Section 7](../docs/LAB_REPORT.md#7-testing-and-verification).
 
-## How the harness works
+## How my harness works
 
 `assert_true(condition, label)` raises `SQLSTATE 45000` with the label when the condition is `NULL` or false. Treating `NULL` as failure matters: a subquery that returns no row makes a comparison `NULL`, and a naive `IF NOT condition` would also treat that as false, but the explicit check documents the intent.
 
@@ -31,33 +31,33 @@ I chose the transaction pattern deliberately:
 - New rows use explicit ids (100 and above) so they cannot collide with seed rows.
 - A failure stops the script; the open transaction is rolled back when the session ends.
 
-The report's [assertion-helper section](../docs/LAB_REPORT.md#72-assertion-helpers) covers handler scope, the prepared-statement cleanup path and the auto-increment gap left by rolled-back inserts.
+I explain handler scope, the prepared-statement cleanup path and the auto-increment gap left by rolled-back inserts in [Section 7.2: Assertion helpers](../docs/LAB_REPORT.md#72-assertion-helpers).
 
-## Run the assembled suite
+## How I run the assembled suite
 
 From the repository root:
 
 ```powershell
-$env:MYSQL_PWD = "<your local MySQL password>"
+$env:MYSQL_PWD = "<local MySQL password>"
 mysql -u root --table -e "source tests/all_tests.sql"
 Remove-Item Env:MYSQL_PWD
 ```
 
-In MySQL Workbench, open `tests/all_tests.sql` and execute the whole script. Do not execute the statements one at a time; the `DELIMITER` blocks and the transaction boundary assume a single run.
+In MySQL Workbench, I open `tests/all_tests.sql` and execute the whole script. I do not execute the statements one at a time; the `DELIMITER` blocks and the transaction boundary assume a single run.
 
-## Run the modular suite
+## How I run the modular suite
 
-Run from the repository root so the `SOURCE tests/sql/...` paths resolve:
+I run this from the repository root so the `SOURCE tests/sql/...` paths resolve:
 
 ```powershell
-$env:MYSQL_PWD = "<your local MySQL password>"
+$env:MYSQL_PWD = "<local MySQL password>"
 mysql -u root --table -e "source tests/run_all.sql"
 Remove-Item Env:MYSQL_PWD
 ```
 
 Both runners should agree. If one passes and the other fails, the assembled file is stale or a path is wrong.
 
-`MYSQL_PWD` is inherited by every `mysql` process in the same shell. If you open a new terminal, set it again, or omit it and add `-p` so the client prompts. Do not commit a real password.
+`MYSQL_PWD` is inherited by every `mysql` process in the same shell. If I open a new terminal, I set it again, or omit it and add `-p` so the client prompts. I never commit a real password.
 
 ## Expected output
 
@@ -73,15 +73,17 @@ My clean run prints:
 
 The helper script also prints `Test helpers created.` before the five suites.
 
-## Add a test
+## How I add a test
 
-1. **State the behaviour in one sentence.** For example: “A price change after a sale does not change the historical line price.”
-2. **Choose the smallest level.** A function boundary belongs in `02_functions_test.sql`; a procedure/trigger interaction belongs in `03_order_tests.sql`; a view value belongs in `05_views_test.sql`.
-3. **Arrange deterministic data.** Use explicit ids or the seed. Avoid relying on auto-increment values.
-4. **Act once.** Call the procedure or run the statement.
-5. **Assert the state, not the implementation.** Check the row values and counts a user would care about.
-6. **Clean up.** Rely on the file's `ROLLBACK`, and do not add DDL inside the transaction.
-7. **Update both runners.** Add the test to the modular file, then regenerate or manually update `tests/all_tests.sql`. Run `tests/run_all.sql` as well.
+When I add a test, I follow these steps:
+
+1. **I state the behaviour in one sentence.** For example: “A price change after a sale does not change the historical line price.”
+2. **I choose the smallest level.** A function boundary belongs in `02_functions_test.sql`; a procedure/trigger interaction belongs in `03_order_tests.sql`; a view value belongs in `05_views_test.sql`.
+3. **I arrange deterministic data.** I use explicit ids or the seed, and I avoid relying on auto-increment values.
+4. **I act once.** I call the procedure or run the statement.
+5. **I assert the state, not the implementation.** I check the row values and counts a user would care about.
+6. **I clean up.** I rely on the file's `ROLLBACK`, and I do not add DDL inside the transaction.
+7. **I update both runners.** I add the test to the modular file, then regenerate or manually update `tests/all_tests.sql`. I also run `tests/run_all.sql`.
 
 A positive assertion:
 
@@ -103,28 +105,28 @@ CALL assert_raises(
 );
 ```
 
-Inside the SQL string, double the single quotes. The expected state is the five-character SQLSTATE, not the MySQL error number: `23000` for integrity violations, `HY000` for many `CHECK` failures, and `45000` for the project's own `SIGNAL`s.
+Inside the SQL string, I double the single quotes. The expected state is the five-character SQLSTATE, not the MySQL error number: `23000` for integrity violations, `HY000` for many `CHECK` failures, and `45000` for the project's own `SIGNAL`s.
 
-The report's [coverage-gaps section](../docs/LAB_REPORT.md#77-coverage-gaps) lists the cases I did not test, including the concurrency test I would add next.
+I list the cases I did not test, including the concurrency test I would add next, in [Section 7.7: Coverage gaps](../docs/LAB_REPORT.md#77-coverage-gaps).
 
-## Diagnose a failure
+## How I diagnose a failure
 
-| Symptom | Likely cause | What to do |
+| Symptom | Likely cause | What I do |
 |---|---|---|
-| `Expected an error but the statement succeeded` | Constraint missing, wrong data, or test using the wrong key | Inspect the constraint and the row; run the statement manually |
-| `Statement failed with an unexpected SQLSTATE` | Wrong expected class, or a different layer rejected it | Check whether it is `23000`, `HY000` or `45000`; adjust the test or the code |
-| `Unknown column` / `Unknown table` | Build not run, wrong database, or stale assembled file | `USE inventory_order_mgt;` and rerun the build |
-| `Duplicate entry` in setup | A previous test did not roll back, or an explicit id already exists | Rebuild; ensure every file ends with `ROLLBACK` |
-| `Check constraint is violated` | Test value outside the allowed range | Fix the test data or the constraint |
-| `Deadlock` / lock wait | A concurrent session holds a lock | Roll back; inspect `SHOW ENGINE INNODB STATUS` |
-| `DELIMITER` syntax error | Ran a routine body as separate statements | Run the whole script |
-| `SOURCE` file not found | Wrong working directory | Run from the repository root |
-| Test passes alone but fails in the suite | Earlier file left state behind, or the assembly is stale | Run the suite in order; check each `ROLLBACK`; rebuild |
-| Quality check fails after tests | A test did not roll back, or a manual edit changed data | Rebuild; investigate rather than deleting rows |
+| `Expected an error but the statement succeeded` | Constraint missing, wrong data, or test using the wrong key | I inspect the constraint and the row, then run the statement manually |
+| `Statement failed with an unexpected SQLSTATE` | Wrong expected class, or a different layer rejected it | I check whether it is `23000`, `HY000` or `45000`, then adjust the test or the code |
+| `Unknown column` / `Unknown table` | Build not run, wrong database, or stale assembled file | I run `USE inventory_order_mgt;` and rerun the build |
+| `Duplicate entry` in setup | A previous test did not roll back, or an explicit id already exists | I rebuild and ensure every file ends with `ROLLBACK` |
+| `Check constraint is violated` | Test value outside the allowed range | I fix the test data or the constraint |
+| `Deadlock` / lock wait | A concurrent session holds a lock | I roll back and inspect `SHOW ENGINE INNODB STATUS` |
+| `DELIMITER` syntax error | Ran a routine body as separate statements | I run the whole script |
+| `SOURCE` file not found | Wrong working directory | I run from the repository root |
+| Test passes alone but fails in the suite | Earlier file left state behind, or the assembly is stale | I run the suite in order, check each `ROLLBACK`, and rebuild |
+| Quality check fails after tests | A test did not roll back, or a manual edit changed data | I rebuild and investigate rather than deleting rows |
 
-The report's [issues I found and fixed](../docs/LAB_REPORT.md#76-issues-i-found-and-fixed) covers the failures that shaped the harness.
+I explain the failures that shaped the harness in [Section 7.6: Issues I found and fixed](../docs/LAB_REPORT.md#76-issues-i-found-and-fixed).
 
-## Coverage gaps
+## What I do not cover
 
 I deliberately kept the suite focused. It does **not** cover:
 
@@ -135,12 +137,12 @@ I deliberately kept the suite focused. It does **not** cover:
 - Time-zone behaviour, backup/restore, replication or privilege tests.
 - DDL changes and migration rollback.
 
-The most valuable next test I would add is a concurrency test, because the locking design is the most subtle part of the project. The report's [coverage-gaps section](../docs/LAB_REPORT.md#77-coverage-gaps) discusses the rest.
+The most valuable next test I would add is a concurrency test, because the locking design is the most subtle part of the project. I discuss the rest in [Section 7.7: Coverage gaps](../docs/LAB_REPORT.md#77-coverage-gaps).
 
-## Source of truth
+## Keeping the suite in sync
 
-The `.sql` files in `tests/sql/` are the source of truth. If you change one, update `tests/all_tests.sql` so the assembled suite stays in sync, or use `tests/run_all.sql` to run the modular files directly.
+The `.sql` files in `tests/sql/` are the source of truth. If I change one, I update `tests/all_tests.sql` so the assembled suite stays in sync, or I use `tests/run_all.sql` to run the modular files directly.
 
-The tests assume a clean build with the seed data. If you have run the reports, the benchmark or an experiment that changed data, rerun `sql/build/build.sql` before investigating a test failure.
+The tests assume a clean build with the seed data. If I have run the reports, the benchmark or an experiment that changed data, I rerun `sql/build/build.sql` before investigating a test failure.
 
 The test runner account needs `EXECUTE` on the helper procedures and the project procedures, plus `SELECT`, `INSERT` and `UPDATE` on the tables. Creating the helpers at runtime also needs `CREATE ROUTINE`; in a shared environment, an administrator can create the helpers once and grant `EXECUTE`.

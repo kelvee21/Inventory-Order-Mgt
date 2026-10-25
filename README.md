@@ -24,18 +24,18 @@ The main things I wanted the finished database to demonstrate were:
 
 I wrote the lab report as the graded account of the project. It follows the build order, from the schema and order workflow through reporting, replenishment, performance and testing, and ends with my reflection.
 
-| Goal | Start here |
+| What I want to check | Where I look |
 |---|---|
-| Run the project for the first time | [Quick start](#quick-start-in-mysql-workbench), then [Section 7.4: Clean-build result](docs/LAB_REPORT.md#74-clean-build-result) |
-| Understand the schema and constraints | [Section 2: Database design and schema](docs/LAB_REPORT.md#2-database-design-and-schema) |
-| Trace an order from JSON to stock | [Section 3: Order placement](docs/LAB_REPORT.md#3-order-placement-and-inventory-automation), especially [Esi's worked example](docs/LAB_REPORT.md#36-worked-example-esis-order) |
-| Understand reporting and window functions | [Section 4: Monitoring and reporting](docs/LAB_REPORT.md#4-monitoring-and-reporting) |
-| Understand indexes and the benchmark | [Section 6: Views and performance](docs/LAB_REPORT.md#6-views-and-performance) |
-| Understand locking and transaction boundaries | [Transactions and concurrency](docs/LAB_REPORT.md#39-transactions-and-concurrency) |
-| Review the testing and verification evidence | [Section 7: Testing and verification](docs/LAB_REPORT.md#7-testing-and-verification) |
-| Review the design choices and lessons | [Design decision log](docs/LAB_REPORT.md#83-design-decision-log) and [key takeaways](docs/LAB_REPORT.md#91-key-takeaways) |
+| Running the project for the first time | [Quick start](#quick-start-in-mysql-workbench), then [Section 7.4: Clean-build result](docs/LAB_REPORT.md#74-clean-build-result) |
+| Understanding the schema and constraints | [Section 2: Database design and schema](docs/LAB_REPORT.md#2-database-design-and-schema) |
+| Tracing an order from JSON to stock | [Section 3: Order placement](docs/LAB_REPORT.md#3-order-placement-and-inventory-automation), especially [Esi's worked example](docs/LAB_REPORT.md#36-worked-example-esis-order) |
+| Understanding reporting and window functions | [Section 4: Monitoring and reporting](docs/LAB_REPORT.md#4-monitoring-and-reporting) |
+| Understanding indexes and the benchmark | [Section 6: Views and performance](docs/LAB_REPORT.md#6-views-and-performance) |
+| Understanding locking and transaction boundaries | [Transactions and concurrency](docs/LAB_REPORT.md#39-transactions-and-concurrency) |
+| Reviewing the testing and verification evidence | [Section 7: Testing and verification](docs/LAB_REPORT.md#7-testing-and-verification) |
+| Reviewing the design choices and lessons | [Design decision log](docs/LAB_REPORT.md#83-design-decision-log) and [key takeaways](docs/LAB_REPORT.md#91-key-takeaways) |
 
-I keep the companion files deliberately short. `README.md` tells you how to run the project; `sql/README.md` maps the stages; `tests/README.md` explains the suite. The graded report explains the reasoning behind them.
+I keep the companion files deliberately short. `README.md` explains how I run the project; `sql/README.md` maps the stages; `tests/README.md` explains the suite. I explain the reasoning behind them in the graded report.
 
 ## Requirements
 
@@ -46,25 +46,25 @@ The local MySQL service I used during development was `MySQL80` on port `3306`.
 
 ## Quick start in MySQL Workbench
 
-1. Open a connection to your local MySQL 8 server as a user that can create tables, indexes, views, routines and triggers. On a local lab, `root` is typical. In a shared environment, ask for `CREATE`, `ALTER`, `DROP`, `INDEX`, `REFERENCES`, `CREATE ROUTINE`, `ALTER ROUTINE`, `EXECUTE`, `CREATE VIEW` and `TRIGGER` on the schema.
-2. Open `sql/build/build.sql`.
-3. Execute the whole script. It creates the `inventory_order_mgt` database, tables, indexes, functions, views, triggers, procedures and seed data.
-4. Open `sql/08_reports/08_reports.sql` and execute the queries one section at a time.
-5. Open `sql/09_quality/09_data_quality_checks.sql` and execute it. Every check should report `PASS`.
+1. I open a connection to my local MySQL 8 server as a user that can create tables, indexes, views, routines and triggers. On a local lab, `root` is typical. In a shared environment, I ask for `CREATE`, `ALTER`, `DROP`, `INDEX`, `REFERENCES`, `CREATE ROUTINE`, `ALTER ROUTINE`, `EXECUTE`, `CREATE VIEW` and `TRIGGER` on the schema.
+2. I open `sql/build/build.sql`.
+3. I execute the whole script. It creates the `inventory_order_mgt` database, tables, indexes, functions, views, triggers, procedures and seed data.
+4. I open `sql/08_reports/08_reports.sql` and execute the queries one section at a time.
+5. I open `sql/09_quality/09_data_quality_checks.sql` and execute it. Every check should report `PASS`.
 
-To rebuild from scratch, run `sql/build/build.sql` again. `sql/00_reset/00_reset.sql` drops only the lab objects in `inventory_order_mgt`; it does not drop the database.
+I rebuild from scratch by running `sql/build/build.sql` again. `sql/00_reset/00_reset.sql` drops only the lab objects in `inventory_order_mgt`; it does not drop the database.
 
 ### CLI alternative
 
 ```powershell
-$env:MYSQL_PWD = "<your local MySQL password>"
+$env:MYSQL_PWD = "<local MySQL password>"
 mysql -u root -e "source sql/build/build.sql"
 mysql -u root --table -e "source sql/08_reports/08_reports.sql"
 mysql -u root --table -e "source sql/09_quality/09_data_quality_checks.sql"
 Remove-Item Env:MYSQL_PWD
 ```
 
-Do not commit the real password. `MYSQL_PWD` is inherited by child processes and is only a local convenience; on a shared machine use `mysql -u root -p` or a login path created with `mysql_config_editor`. I keep credentials in a local `.env` or Workbench profile, never in a tracked file. A placeholder template is provided in [`.env.example`](.env.example).
+I never commit the real password. `MYSQL_PWD` is inherited by child processes and is only a local convenience; on a shared machine I use `mysql -u root -p` or a login path created with `mysql_config_editor`. I keep credentials in a local `.env` or Workbench profile, never in a tracked file. A placeholder template is provided in [`.env.example`](.env.example).
 
 ## Project structure
 
@@ -160,7 +160,7 @@ After I call `restock_low_products()`, the mouse, monitor and laptop stand are t
 
 ## Transactions
 
-I deliberately made `place_order` and `restock_low_products` leave commits to the caller. Call them inside a transaction:
+I deliberately made `place_order` and `restock_low_products` leave commits to the caller. I call them inside a transaction:
 
 ```sql
 START TRANSACTION;
@@ -176,21 +176,21 @@ CALL place_order(
 COMMIT;
 ```
 
-On failure, run `ROLLBACK`. This keeps the procedures composable and lets the tests roll back their changes.
+On failure, I run `ROLLBACK`. This keeps the procedures composable and lets the tests roll back their changes.
 
 ## Tests
 
 After a clean build, I run the assembled suite:
 
 ```powershell
-$env:MYSQL_PWD = "<your local MySQL password>"
+$env:MYSQL_PWD = "<local MySQL password>"
 mysql -u root --table -e "source tests/all_tests.sql"
 Remove-Item Env:MYSQL_PWD
 ```
 
-In MySQL Workbench, open `tests/all_tests.sql` and execute the whole script.
+In MySQL Workbench, I open `tests/all_tests.sql` and execute the whole script.
 
-`tests/all_tests.sql` contains the helpers and all five test files. `tests/run_all.sql` is the CLI-only alternative that uses `SOURCE`; run it from the repository root so its `tests/sql/...` paths resolve.
+`tests/all_tests.sql` contains the helpers and all five test files. `tests/run_all.sql` is the CLI-only alternative that uses `SOURCE`; I run it from the repository root so its `tests/sql/...` paths resolve.
 
 Each test file wraps its changes in `START TRANSACTION` / `ROLLBACK`. A failed assertion raises `SQLSTATE 45000` and stops the script.
 
@@ -206,7 +206,7 @@ My run on MySQL 8.0.46 produced:
 
 I wrote the suite to cover constraint violations, tier and discount boundaries, multi-product orders, caller-price rejection, historical price snapshots, oversell rejection, JSON validation, restock idempotence and the reporting views. I ran both the assembled suite and the modular CLI runner, and both completed with all five suites passing.
 
-For the assertion design, the issues I found, and the coverage gaps, read [Section 7: Testing and verification](docs/LAB_REPORT.md#7-testing-and-verification) in the report.
+I explain the assertion design, the issues I found and the coverage gaps in [Section 7: Testing and verification](docs/LAB_REPORT.md#7-testing-and-verification) of the report.
 
 ## Data-quality checks
 
@@ -216,7 +216,7 @@ I wrote `sql/09_quality/09_data_quality_checks.sql` to run 16 read-only integrit
 mysql -u root --table -e "source sql/09_quality/09_data_quality_checks.sql"
 ```
 
-In my run, every row reported `PASS`, including stock-to-log reconciliation, order-total reconciliation, sale-log matching, discount rules, tier rules and low-stock view consistency. The report's [data-quality section](docs/LAB_REPORT.md#45-data-quality-checks) explains what each check proves and where the gaps are.
+In my run, every row reported `PASS`, including stock-to-log reconciliation, order-total reconciliation, sale-log matching, discount rules, tier rules and low-stock view consistency. I explain what each check proves and where the gaps are in [Section 4.5: Data-quality checks](docs/LAB_REPORT.md#45-data-quality-checks).
 
 ## Performance benchmark
 
@@ -233,7 +233,7 @@ My measurements on MySQL 8.0.46 were:
 | Before index | full table scan + sort | 200,000 | 31.4 ms (31–42 ms observed) |
 | After index | covering index lookup, reverse order | 40 | 0.065 ms (0.065–0.077 ms observed) |
 
-The exact numbers depend on the machine and buffer state; the plan shape is the important result. The script runs `EXPLAIN ANALYZE` before and after the index and prints both plans, so I compare the access type and rows examined rather than trusting a single millisecond figure. The report's [benchmark interpretation](docs/LAB_REPORT.md#65-what-the-benchmark-shows-and-does-not-show) explains how to read them.
+The exact numbers depend on the machine and buffer state; the plan shape is the important result. The script runs `EXPLAIN ANALYZE` before and after the index and prints both plans, so I compare the access type and rows examined rather than trusting a single millisecond figure. I explain how to read the plans in [Section 6.5: What the benchmark shows and does not show](docs/LAB_REPORT.md#65-what-the-benchmark-shows-and-does-not-show).
 
 ## Verification snapshot
 
@@ -251,10 +251,10 @@ I recorded these results after the final clean run:
 
 These are the problems I ran into or deliberately checked while getting the build to run:
 
-- **`CHECK` constraints seem ignored:** confirm `SELECT VERSION();` is 8.0.16 or newer.
-- **`Error 1418` when creating a function:** declare it `DETERMINISTIC`, `NO SQL` or `READS SQL DATA`, or enable `log_bin_trust_function_creators`.
-- **`Error 1419` when creating functions/triggers:** the account lacks `SET_USER_ID` (or the deprecated `SUPER`) while binary logging is enabled. Use a privileged local user, or ask an administrator to enable `log_bin_trust_function_creators`.
-- **`DELIMITER` errors in Workbench:** run the whole `sql/build/build.sql` script rather than individual statements inside a routine.
-- **`Can't connect`:** confirm the MySQL80 service is running and Workbench is using port 3306.
-- **`Access denied for user`:** set `MYSQL_PWD` in the same shell session as the command, or use `mysql -u root -p`; confirm the user and host match the account.
-- **Reset a failed run:** run `sql/00_reset/00_reset.sql`, then `sql/build/build.sql`.
+- **`CHECK` constraints seem ignored:** I confirm `SELECT VERSION();` is 8.0.16 or newer.
+- **`Error 1418` when creating a function:** I declare it `DETERMINISTIC`, `NO SQL` or `READS SQL DATA`, or enable `log_bin_trust_function_creators`.
+- **`Error 1419` when creating functions/triggers:** the account lacks `SET_USER_ID` (or the deprecated `SUPER`) while binary logging is enabled. I use a privileged local user, or ask an administrator to enable `log_bin_trust_function_creators`.
+- **`DELIMITER` errors in Workbench:** I run the whole `sql/build/build.sql` script rather than individual statements inside a routine.
+- **`Can't connect`:** I confirm the MySQL80 service is running and Workbench is using port 3306.
+- **`Access denied for user`:** I set `MYSQL_PWD` in the same shell session as the command, or use `mysql -u root -p`; I confirm the user and host match the account.
+- **Reset a failed run:** I run `sql/00_reset/00_reset.sql`, then `sql/build/build.sql`.

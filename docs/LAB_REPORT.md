@@ -918,7 +918,7 @@ The scoped handler matters: if the `SIGNAL` used to report a failed assertion we
 I run the assembled suite after a clean build:
 
 ```powershell
-$env:MYSQL_PWD = "<your local MySQL password>"
+$env:MYSQL_PWD = "<local MySQL password>"
 mysql -u root -e "source sql/build/build.sql"
 mysql -u root --table -e "source tests/all_tests.sql"
 Remove-Item Env:MYSQL_PWD
@@ -1071,15 +1071,15 @@ I would also add more months of seed data so the month-over-month report has a r
 
 This project opened several areas for further study:
 
-1. **Transaction isolation and locking.** Read the MySQL manual chapters on InnoDB locking, consistent reads and isolation levels, and reproduce the two-session experiments.
-2. **Index design.** Read *Use the Index, Luke* and the MySQL optimizer documentation. Practise reading `EXPLAIN ANALYZE` trees and explaining every node.
-3. **Normalisation and modelling.** Work through a modelling exercise with suppliers, warehouses and returns. Decide where to denormalise and how to maintain it.
-4. **Testing.** Learn property-based testing, test pyramids and CI. Add a concurrency test with two connections.
-5. **Security.** Learn least-privilege grants, `SQL SECURITY`, prepared statements and SQL injection. Audit the definer rights on the routines.
-6. **Operations.** Learn `mysqldump`, physical backups, point-in-time recovery, replication and monitoring.
-7. **Performance.** Learn the buffer pool, redo/undo logs, page structure, join algorithms and the optimizer trace.
+1. **Transaction isolation and locking.** I would read the MySQL manual chapters on InnoDB locking, consistent reads and isolation levels, and reproduce the two-session experiments.
+2. **Index design.** I would read *Use the Index, Luke* and the MySQL optimizer documentation, and practise reading `EXPLAIN ANALYZE` trees until I could explain every node.
+3. **Normalisation and modelling.** I would work through a modelling exercise with suppliers, warehouses and returns, and decide where to denormalise and how to maintain it.
+4. **Testing.** I would learn property-based testing, test pyramids and CI, and add a concurrency test with two connections.
+5. **Security.** I would learn least-privilege grants, `SQL SECURITY`, prepared statements and SQL injection, and audit the definer rights on the routines.
+6. **Operations.** I would learn `mysqldump`, physical backups, point-in-time recovery, replication and monitoring.
+7. **Performance.** I would learn the buffer pool, redo/undo logs, page structure, join algorithms and the optimizer trace.
 
-A useful habit is to pick one query or one invariant and follow it all the way down: from the report, to the view, to the table, to the index, to the transaction, to the test. Depth comes from tracing connections, not from memorising syntax.
+One habit I want to keep is to pick one query or one invariant and follow it all the way down: from the report, to the view, to the table, to the index, to the transaction, to the test. Depth comes from tracing connections, not from memorising syntax.
 
 ## 9. Conclusion
 
